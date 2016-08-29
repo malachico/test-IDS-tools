@@ -11,7 +11,6 @@ sr1(IP(dst="8.8.8.8") / UDP(dport=53) / DNS(rd=1, qd=DNSQR(qname="www.google.com
 print "## Second anomaly : DNS flood"
 for i in range(100):
     answer = sr1(IP(dst="8.8.8.8") / UDP(dport=53) / DNS(rd=1, qd=DNSQR(qname="www.google.com")), verbose=0)
-    if i % 10 == 0:
-        print i, "DNS packets were sent"
+    if i+1 % 10 == 0:
+        print i+1, "DNS packets were sent"
 
-print i, "DNS packets were sent"

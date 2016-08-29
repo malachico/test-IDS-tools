@@ -52,7 +52,7 @@ ping google.com -c 1
 print_end "Blacklist"
 
 # DHCP anomaly
-# 1. detect increased traffic of DHCP
+# detect increased traffic of DHCP
 # Send 1000 dhcp request with spoofing client 0.0.0.0
 print_start "DHCP increased traffic anomaly"
 for i in `seq 1 1000`;
@@ -61,6 +61,15 @@ for i in `seq 1 1000`;
     done
 print_end "DHCP increased traffic anomaly"
 
+
+# DOS
+# Simple DoS
+print_start "simple dos attack"
+python dos.py $VICTIM
+print_end "simple dos attack"
+
+# Amplified DDoS attack
+# Use Saddam to generate amplified DDoS attack
 
 
 # 8 DIRINET
