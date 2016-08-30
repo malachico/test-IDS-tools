@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 from scapy.all import sr1
 from scapy.layers.inet import IP, ICMP
 
@@ -15,6 +13,4 @@ for i in range(100):
 
     # Send packet
     sr1(IP(dst="google.com") / ICMP() / extra_payload, verbose=0)
-
-
 
