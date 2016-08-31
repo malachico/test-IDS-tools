@@ -24,7 +24,7 @@ function print_end {
 # -c : send 1 packet
 # -W : time to wait to response
 function communicate_with_malwares {
-    ping 98.131.229.2 -W 0 -c 1
+    ping 93.190.140.162 -W 0 -c 1
     ping 98.131.172.1 -W 0 -c 1
     ping 98.131.132.1 -W 0 -c 1
     ping 96.30.28.181 -W 0 -c 1
