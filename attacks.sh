@@ -44,7 +44,7 @@ function communicate_with_malwares {
 # n.b : the list of the IPs can be found in : https://www.malwaredomainlist.com/mdl.php
 print_start "Blacklist"
 # Ping the malware IP.
-communicate_with_malwares
+#communicate_with_malwares
 # ping google
 ping google.com -c 1
 print_end "Blacklist"
@@ -56,7 +56,7 @@ print_end "Blacklist"
 print_start "DHCP increased traffic anomaly"
 for i in `seq 1 100`;
     do
-            dhcping -r -t 0 -c 0.0.0.0 > /dev/null
+            dhcping -r -t 0 -c 0.0.0.0 2> /dev/null
             if ! ((i % 10)); then
                 echo "$i spoofed DHCP requests were sent."
             fi
