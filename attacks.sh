@@ -4,8 +4,8 @@
 # Author: Malachi Cohen
 
 # In linux we need to be root in order to generate traffic online (in most cases)
-su root
-
+echo "!!!!"
+su
 ########################### variables
 # Victim address
 VICTIM='10.8.120.129'
@@ -15,38 +15,17 @@ function print_start {
     echo "############## starting $1 at `date` ##############"
 }
 
+echo 1
 function print_end {
     echo  "############## finished $1 at `date` ##############"
 }
-
-########################### testing flowmon functions
-# This function send IP-ICMP paket to top spammers. flowmon should alert about it
-# -c : send 1 packet
-# -W : time to wait to response
-function communicate_with_malwares {
-    ping 93.190.140.162 -W 0 -c 1
-    ping 98.131.172.1 -W 0 -c 1
-    ping 98.131.132.1 -W 0 -c 1
-    ping 96.30.28.181 -W 0 -c 1
-    ping 103.31.186.29 -W 0 -c 1
-    ping 119.18.61.133 -W 0 -c 1
-    ping 176.31.28.226 -W 0 -c 1
-}
-
-
 ########################### Attacks
-
+echo 2
 # Blacklist
-# Ping a malware-associated IP
-# Ping google
-# Assert a blacklist event was created for the malware IP
-# Assert a blacklist event wasn't created for google
-# n.b : the list of the IPs can be found in : https://www.malwaredomainlist.com/mdl.php
+# communicate with malware-associated IPs list which generated automatically in-place
 print_start "Blacklist"
 # Ping the malware IP.
-communicate_with_malwares
-# ping google
-ping google.com -c 1
+python blacklist
 print_end "Blacklist"
 
 
