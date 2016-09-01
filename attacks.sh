@@ -4,7 +4,6 @@
 # Author: Malachi Cohen
 
 # In linux we need to be root in order to generate traffic online (in most cases)
-echo "!!!!"
 su
 ########################### variables
 # Victim address
