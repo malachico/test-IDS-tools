@@ -1,30 +1,32 @@
 #!/bin/bash
 
-# This  script tests the flowmon capabilities
-# Author: Malachi Cohen
+# This script tests the flowmon capabilities
+# @Author: Malachi Cohen
 
 # In linux we need to be root in order to generate traffic online (in most cases)
 su
-########################### variables
+
+########################### Variables / Configs
 # Victim address
 VICTIM='10.8.120.129'
-INTERFACE=ens160
-########################### utility functions
+
+# Interface to run the traffic through
+INTERFACE=eth0
+
+########################### Utility functions
 function print_start {
     echo "############## starting $1 at `date` ##############"
 }
 
-echo 1
 function print_end {
     echo  "############## finished $1 at `date` ##############"
 }
-########################### Attacks
-echo 2
+
+########################### Attack!
 # Blacklist
 # communicate with malware-associated IPs list which generated automatically in-place
 print_start "Blacklist"
-# Ping the malware IP.
-python blacklist
+python blacklist.py
 print_end "Blacklist"
 
 
@@ -34,7 +36,7 @@ print_end "Blacklist"
 print_start "DHCP increased traffic anomaly"
 for i in `seq 1 100`;
     do
-            dhcping -r -t 0 -c 0.0.0.0 > /dev/null
+            dhcping -r -t 0 -c 0.0.0.0 2> /dev/null
             if ! ((i % 10)); then
                 echo "$i spoofed DHCP requests were sent."
             fi
@@ -79,26 +81,26 @@ print_end "connect to internet"
 
 # SYN scan
 print_start "SYN port scanning"
-sudo nmap -sS ${VICTIM}
+nmap -sS ${VICTIM}
 print_end "SYN port scanning"
 
 # FIN scan
 print_start "FIN port scanning"
-sudo nmap -sF ${VICTIM}
+nmap -sF ${VICTIM}
 print_end "FIN port scanning"
 
 # XMAS scan
 print_start "XMAS port scanning"
-sudo nmap -sX ${VICTIM}
+nmap -sX ${VICTIM}
 print_end "XMAS port scanning"
 
 # NULL scan
 print_start "NULL port scanning"
-sudo nmap -sN ${VICTIM}
+nmap -sN ${VICTIM}
 print_end "NULL port scanning"
 
 # UDP scan
-sudo nmap -sU ${VICTIM}
+nmap -sU ${VICTIM}
 # SSH attack
 print_start "ssh attack"
 python ssh_attack.py ${VICTIM} common_passwords.txt
@@ -108,34 +110,34 @@ print_end "ssh attack"
 # try to crack RDP server user and password
 print_start "RDP attack"
 cd RDP
-python rdp_attack.py -m x -w rdp_servers.txt -c cracked.txt -n -v common_passwords.txt rdp_servers.txt
+#python rdp_attack.py -m x -w rdp_servers.txt -c cracked.txt -n -v common_passwords.txt rdp_servers.txt
 cd ..
 print_end "RDP attack"
 
 # TOR browsing detection
 # Cahnge MTU for *.pcap files replaying
-sudo ifconfig ${INTERFACE} mtu 9000 up
+ifconfig ${INTERFACE} mtu 9000 up
 
-## replay a pcap file of recorded tor browser usage traffic
-## -t : turbo mode, replay packets as fast as you can (packet timestamp has no effect)
-## --intf1 : which interface to send from (change if necessary)
-#print_start "tor browser detection"
-#sudo tcpreplay -t --intf1=${INTERFACE} tor.pcap
-#print_end "tor browser detection"
-#
-## replay a pcap file of recorded teamviewer (RDP protocol)usage traffic
-## -t : turbo mode, replay packets as fast as you can (packet timestamp has no effect)
-## --intf1 : which interface to send from (change if necessary)
-#print_start "RDP protocol detection"
-#sudo tcpreplay -t --intf1=${INTERFACE} rdp.pcap
-#print_end "RDP protocol detection"
+# replay a pcap file of recorded tor browser usage traffic
+# -t : turbo mode, replay packets as fast as you can (packet timestamp has no effect)
+# --intf1 : which interface to send from (change if necessary)
+print_start "tor browser detection"
+tcpreplay -t --intf1=${INTERFACE} tor.pcap 2> /dev/null
+print_end "tor browser detection"
+
+# replay a pcap file of recorded teamviewer (RDP protocol)usage traffic
+# -t : turbo mode, replay packets as fast as you can (packet timestamp has no effect)
+# --intf1 : which interface to send from (change if necessary)
+print_start "RDP protocol detection"
+tcpreplay -t --intf1=${INTERFACE} rdp.pcap 2> /dev/null
+print_end "RDP protocol detection"
 
 # Telnet anomaly
 # Try to open 100 telnet connections
 print_start "Telnet anomaly"
 for i in `seq 1 100`;
     do
-            sudo nc -p 23 -w 0.1 google.com 2> /dev/null
+            nc -p 23 -w 0.1 google.com 2> /dev/null
             if ! ((i % 10)); then
                 echo "$i telnet requests were sent."
             fi
