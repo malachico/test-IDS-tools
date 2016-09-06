@@ -13,10 +13,10 @@ docker images
 docker run -it <id/name> /bin/bash
 
 # To attach to already running container:
-sudo docker exec -it <id/name> /bin/bash 
+docker exec -it <id/name> /bin/bash 
 
 # In order to run the attacks 
-sudo docker exec d5edbd7cb7f7 /bin/bash -c "cd /home/test_flowmon/ && ./attacks.sh"
+docker exec <id/name> /bin/bash -c "cd /home/test_flowmon/ && ./attacks.sh"
 
 # The attacks which currently implemented: 
 - communicating with viruses
