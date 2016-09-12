@@ -5,7 +5,8 @@ import test_learning.DoS.aggressive as oa
 import test_learning.DoS.stealth as os
 import test_learning.SMTP.aggressive as sa
 import test_learning.SMTP.stealth as ss
-import test_learning.ICMP.aggressive as ia
+import test_learning.ICMP.aggressive as ica
+import test_learning.ICMP.stealth as ics
 
 
 def choose_attack(attack):
@@ -18,8 +19,9 @@ def choose_attack(attack):
         'os': os.stealth_dos,
         'sa': sa.smtp_flood,
         'ss': ss.smtp_flood,
-        'ia': ia.smurf_attack
-    }.get(attack, "attack not found")
+        'ica': ica.smurf_attack,
+        'ics': ics.stealth_smurf
+    }.get(attack, (lambda: "attack not found"))
 
     # Operate attack closure
     closure()

