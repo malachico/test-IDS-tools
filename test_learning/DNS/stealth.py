@@ -37,7 +37,7 @@ def dns_flood():
         duration += configs.send_interval
 
         # if window len wasn't over continue
-        if duration < configs.window_length:
+        if duration < configs.dns_window_length:
             continue
 
         # start new window and initial duration and send interval

@@ -13,7 +13,7 @@ HTTP_PORT = 80
 SMTP_PORT = 587
 
 # TIMES
-window_length = 60 * 6
+window_length = 60 * 60
 send_interval = 10.0
 interval_factor = 0.666
-
+dns_window_length = 5 * 60
