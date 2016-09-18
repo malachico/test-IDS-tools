@@ -1,10 +1,12 @@
 # Test Flowmon  
 #### This repo is for testing flowmon system.
 
-On first time install dependencies: 
-./dependencies.sh
+#### On first time install dependencies:  
+~~~~
+./dependencies.sh 
+~~~~
 
-##### the implemented attacks are:
+#### the implemented attacks are:
 * blacklist
 * DHCP anomaly
 * simple DoS
@@ -21,7 +23,7 @@ On first time install dependencies:
 * Telnet anomaly
 * Large data transfer    
 
- All the above methods will be tested by running ./attacks.sh
+ #### All the above methods will be tested by running ./attacks.sh
 
 # Test learning engines
 ##### Also, There is test for learning that flowmon clain they have:
@@ -33,16 +35,41 @@ On first time install dependencies:
 ##### The configuration is found in test_learning/config.py
 
 ### in order to run each:  
-icmp aggresive: python test_learning ica  
-icmp stealth: python test_learning ics  
-smtp aggresive: python test_learning sa  
-smtp stealth: python test_learning ss  
-DNS aggresive: python test_learning da  
-DNS stealth: python test_learning ds  
-DoS aggresive: python test_learning oa  
-DoS stealth: python test_learning os  
+
+icmp aggresive: 
+~~~~
+python test_learning ica  
+~~~~
+icmp stealth:
+~~~~
+python test_learning ics  
+~~~~
+smtp aggresive: 
+~~~~
+python test_learning sa  
+~~~~
+smtp stealth: 
+~~~~
+python test_learning ss  
+~~~~
+DNS aggresive: 
+~~~~
+python test_learning da  
+~~~~
+DNS stealth: 
+~~~~
+python test_learning ds  
+~~~~
+DoS aggresive: 
+~~~~
+python test_learning oa  
+~~~~
+DoS stealth: 
+~~~~
+python test_learning os  
+~~~~
 ---
-### TO FIX:
+## BUGS / TO FIX:
 Sometimes from virtual machine the reflective DDoS does not work.   
 To operate it:  
 cd reflective_ddos
