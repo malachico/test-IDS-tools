@@ -43,6 +43,17 @@ for i in `seq 1 100`;
     done
 print_end "DHCP increased traffic anomaly"
 
+# DNS anomalies :
+# 1. large payload
+# 2. flood
+print_start "DNS anomalies"
+sudo python DNSsender.py
+print_end "DNS anomalies"
+
+
+
+
+
 
 # DOS
 # Simple DoS
@@ -61,7 +72,7 @@ print_start "reflective DDoS"
 cd reflective_ddos
 for i in `seq 1 10`;
     do
-            python ARDT.py -l akamai_servers_list.txt -t ${VICTIM} -r ExampleHTTPReq.txt  -n 10 >> /dev/null
+            #python ARDT.py -l akamai_servers_list.txt -t ${VICTIM} -r ExampleHTTPReq.txt  -n 10 >> /dev/null
             echo "finished $i iterations out of 10!"
     done
 cd ..
