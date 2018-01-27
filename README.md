@@ -1,5 +1,5 @@
 # Test Flowmon  
-#### This repo is for testing flowmon system.
+#### This repo is for testing IDS tools.
 
 #### On first time install dependencies:  
 ~~~~
