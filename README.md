@@ -1,4 +1,4 @@
-# Test Flowmon  
+# Test IDS tools  
 #### This repo is for testing IDS tools.
 
 #### On first time install dependencies:  
